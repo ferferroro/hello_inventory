@@ -1,0 +1,76 @@
+﻿{% extends 'base.html' %}
+{% block title %} Purchase {% endblock %}
+
+{% block customcss %}
+    <link href="../static/all-themes.css" rel="stylesheet">
+{% endblock %}
+
+{% set bodyclass = 'theme-red' %}
+
+{% block content %}
+    
+    {% include './includes/nav.html' %}
+
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Striped Rows -->
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>Purchase</h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Load Products</button></a></li>
+                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Save</button></a></li>
+                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Export</button></a></li>
+                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Purchase</button></a></li>
+                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Receive</button></a></li>
+                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Appy</button></a></li>
+                                        
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="body table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Purchase Quantity</th>
+                                        <th>Receive Quantity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">KPKB</th>
+                                        <td>Kopiko Black</td>
+                                        <td>0</td>
+                                        <td>10</td>
+                                        <td>9</td>
+                                        <td>Edit | Delete</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Striped Rows -->
+        </div>
+    </section>
+
+    
+
+{% endblock %}
+
+{% block js %}
+    {% include './includes/main-js.html' %}
+{% endblock%}

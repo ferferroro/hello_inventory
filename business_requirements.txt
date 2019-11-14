@@ -1,0 +1,49 @@
+Business Requirements:
+
+1. Ability to Login/Logout
+    a. Maintain by single user
+    b. Application entry point should be the login page
+    c. By default there should be a ready made admin account
+2. Ability to Maintain Product
+    a. Add
+    b. List all Product
+    c. Update
+    d. Delete
+        Fields:
+            i.   id - unique
+            ii.  code - unique string
+            iii. name - string - 50 chars
+            iv.  quantity - integer
+            v.   create_at
+            vi.  updated at
+3. Ability to adjust stock
+    a. show current quantity and let user enter new quantity
+    b. Load all products and can update multiple lines
+    c. Can remove a product that has been added
+    d. Has save button which save current adjustment
+    e. Has apply button which saves the new quantity to the product table
+    f. Fields
+        i.   id - unique
+        ii.  code - character
+        iii. quantity - integer
+4. Ability to Purchase
+    a. Show current quantity and let user enter quantity to be purchased
+    b. Can load all products
+    c. Can remove a product that has been added
+    d. Has Print to output list of product to be purchased
+    e. Has Purchase button - stops the user from making further changes
+    f. Has Recieve button - make receive column updatable
+    g. Has Apply button - add the quantity purchased to the current stock
+    Fields:
+        i.   id
+        ii.  code
+        iii. quantity_purchase
+        iv.  quantity_receive
+
+
+Technical Requirements:
+
+1. Frontend - adminbsb
+2. Backend - Flask
+3. Database - SQLite
+4. Deployment - heroku.com
