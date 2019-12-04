@@ -14,55 +14,81 @@
     <section class="content">
         <div class="container-fluid">
             <!-- Striped Rows -->
-            <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>Purchase</h2>
-                            <ul class="header-dropdown m-r--5">
-                                <li class="dropdown">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Load Products</button></a></li>
-                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Save</button></a></li>
-                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Export</button></a></li>
-                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Purchase</button></a></li>
-                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Receive</button></a></li>
-                                        <li><a href="javascript:void(0);"><button type="button" class="btn btn-block btn-lg btn-default waves-effect">Appy</button></a></li>
-                                        
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Name</th>
-                                        <th>Quantity</th>
-                                        <th>Purchase Quantity</th>
-                                        <th>Receive Quantity</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">KPKB</th>
-                                        <td>Kopiko Black</td>
-                                        <td>0</td>
-                                        <td>10</td>
-                                        <td>9</td>
-                                        <td>Edit | Delete</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <form method='POST'>
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card">
+                            <div class="header">
+                                <h2>{{ purchase_header.description }} | {{ purchase_header.status }}</h2>
+                                <ul class="header-dropdown m-r--5">
+                                    <li class="dropdown">
+                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                            <i class="material-icons">more_vert</i>
+                                        </a>
+                                        <ul class="dropdown-menu pull-right">
+                                            <li>
+                                                <button type="submit" class="btn btn-block btn-lg btn-default waves-effect" name="submit_type" value="{{ purchase_header.id }}">Load Products</button>
+                                            </li>
+                                            <li>
+                                                <button type="submit" class="btn btn-block btn-lg btn-default waves-effect" name="submit_type" value="save_purchase">Save Purchase</button>
+                                            </li>
+                                            <li>
+                                                <button type="submit" class="btn btn-block btn-lg btn-default waves-effect" name="submit_type" value="export_purchase">Export Purchase</button>
+                                            </li>
+                                            <li>
+                                                <button type="submit" class="btn btn-block btn-lg btn-default waves-effect" name="submit_type" value="start_purchase">Start Purchase</button>
+                                            </li>
+                                            <li>
+                                                <button type="submit" class="btn btn-block btn-lg btn-default waves-effect" name="submit_type" value="receive_purchase">Receive Purchase</button>
+                                            </li>
+                                            <li>
+                                                <button type="submit" class="btn btn-block btn-lg btn-default waves-effect" name="submit_type" value="apply_purchase">Apply Purchase</button>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="body table-responsive">
+                                {% if message %}
+                                    <div class="alert {{ css_class }}">
+                                        {{ message }}
+                                    </div>
+                                {% endif %}
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Name</th>
+                                            <th>Quantity</th>
+                                            <th>Purchase Quantity</th>
+                                            <th>Receive Quantity</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for purchase_detail in purchase_header.purchase_details[:] %}
+                                            <tr>
+                                                <th scope="row">{{ purchase_detail.purchase_detail.code }}</th>
+                                                <td>{{ purchase_detail.purchase_detail.name }}</td>
+                                                <td>{{ purchase_detail.purchase_detail.quantity }}</td>
+                                                <td>
+                                                    <input type="number" name="PURCHASE-{{ purchase_detail.id }}-{{ purchase_detail.purchase_detail.code }}" class="form-control" value="{{ purchase_detail.quantity_purchase }}" {% if purchase_field_state %} {{ purchase_field_state }} {% endif %}>
+                                                </td>
+                                                <td>
+                                                    <input id="qty-receive" type="number" name="RECEIVE-{{ purchase_detail.id }}-{{ purchase_detail.purchase_detail.code }}" class="form-control" value="{{ purchase_detail.quantity_receive }}" {% if receive_field_state %} {{ receive_field_state }} {% endif %}>
+                                                </td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-danger waves-effect" name="submit_type" value="DEL-{{ purchase_detail.id }}">Remove</button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
             <!-- #END# Striped Rows -->
         </div>
     </section>

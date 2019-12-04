@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import ast 
 
 app = Flask(__name__) # '__main__ or app'
 
@@ -13,6 +14,7 @@ app.config['SECRET_KEY'] = 'etoaysekretolamang'
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -205,15 +207,283 @@ def delete_product(id):
             db.session.commit()
             return redirect(url_for('products'))
 
-@app.route('/adjustment')
+@app.route('/adjustment', methods=['POST','GET'])
 @login_required
 def adjustment():
-    return render_template('adjustment.html')   
+    adjustment_header = AdjustmentHeader.query.filter_by(id=1).first_or_404()
 
-@app.route('/purchase')
+    if request.method == 'GET':
+        return render_template('adjustment.html', 
+            adjustment_header=adjustment_header,
+            message='', 
+            css_class=''
+        )   
+    
+    if request.method == 'POST' and adjustment_header: 
+        # get the submit type | save or apply
+        submit_type = request.form['submit_type']
+
+        # if load products 
+        if submit_type == '1':
+            # get all the products
+            all_products = Product.query.all()
+            for product in all_products:
+                existing_prod = AdjustmentDetail.query.filter_by(product_id=product.id).first()
+                if not existing_prod:
+                    adjustment_detail = AdjustmentDetail(quantity_adjust=0, 
+                        adjustment_reference=adjustment_header, 
+                        adjustment_detail=product)
+                    db.session.add(adjustment_detail)
+                    db.session.commit()
+            return redirect('/adjustment')
+
+        if submit_type == 'save_adjustment' or submit_type == 'apply_adjustment':
+            # get the form data 
+            raw_datas = request.form 
+            # set the form data to dictionary
+            raw_datas = raw_datas.to_dict(flat=False)
+            # strip off unwated characters
+            raw_datas = str(raw_datas).replace("[", "")
+            raw_datas = str(raw_datas).replace("]", "")
+            # convert the raw data to a dictionary
+            adj_lines = ast.literal_eval(raw_datas) 
+
+            # save current adjustment 
+            if submit_type == 'save_adjustment':
+                # loop all lines
+                for adj_id in adj_lines:
+                    if adj_id == 'submit_type':
+                        continue
+                    # commit changes
+                    adj_detail = AdjustmentDetail.query.filter_by(id=int(adj_id)).first()
+                    if adj_detail:
+                        adj_detail.quantity_adjust = int(adj_lines[adj_id])
+                        db.session.commit()
+                message = 'Adjustment has been Saved!'
+            if submit_type == 'apply_adjustment':
+                # loop all lines
+                for adj_id in adj_lines:
+                    if adj_id == 'submit_type':
+                        continue
+                    # commit changes
+                    adj_detail = AdjustmentDetail.query.filter_by(id=int(adj_id)).first()
+                    if adj_detail:
+                        # save the current screen to adjustment datail table
+                        adj_detail.quantity_adjust = int(adj_lines[adj_id])
+                        # now save to the product able
+                        prod = Product.query.filter_by(id=adj_detail.product_id).first()
+                        if prod:
+                            prod.quantity = adj_detail.quantity_adjust
+                            adj_detail.quantity_adjust = 0
+                        db.session.commit()
+                message = 'Adjustment has been Applied!'
+
+            return render_template('adjustment.html', 
+                    adjustment_header=adjustment_header,
+                    message=message, 
+                    css_class='alert-success'
+                ) 
+        temp_char = submit_type.split('-')
+        if temp_char[0] == "DEL":
+            adj_detail = AdjustmentDetail.query.filter_by(id=int(temp_char[1])).first()
+            if adj_detail:
+                db.session.delete(adj_detail)
+                db.session.commit()
+                return render_template('adjustment.html', 
+                        adjustment_header=adjustment_header,
+                        message='Stock adjustment line removed!', 
+                        css_class='alert-success')
+
+@app.route('/purchase', methods=['POST','GET'])
 @login_required
 def purchase():
-    return render_template('purchase.html')   
+    purchase_header = PurchaseHeader.query.filter_by(id=1).first_or_404()
+
+    receive_field_state = ''
+    purchase_field_state = ''
+    if purchase_header.status == 'New':
+        receive_field_state = ''
+        receive_field_state = 'readonly="readonly"'
+    elif purchase_header.status == 'In Transit':
+        receive_field_state = 'readonly="readonly"'
+        purchase_field_state = 'readonly="readonly"'
+    elif  purchase_header.status == 'Received':
+        receive_field_state = ''
+        purchase_field_state = 'readonly="readonly"'
+
+    if request.method == 'GET':
+        return render_template('purchase.html', 
+            purchase_header=purchase_header,
+            message='', 
+            css_class='',
+            receive_field_state=receive_field_state,
+            purchase_field_state=purchase_field_state
+        )   
+    
+    if request.method == 'POST' and purchase_header: 
+        # get the submit type | save or apply
+        submit_type = request.form['submit_type']
+        css_class = 'alert-success' 
+
+        # if load products 
+        if submit_type == '1':
+            # get all the products
+            all_products = Product.query.all()
+            for product in all_products:
+                existing_prod = PurchaseDetail.query.filter_by(product_id=product.id).first()
+                if not existing_prod:
+                    purchase_detail = PurchaseDetail(quantity_purchase=0, 
+                        quantity_receive=0,
+                        purchase_reference=purchase_header, 
+                        purchase_detail=product)
+                    db.session.add(purchase_detail)
+                    db.session.commit()
+            return render_template('purchase.html', 
+                purchase_header=purchase_header,
+                message='Products has been loaded!', 
+                css_class='alert-success',
+                receive_field_state=receive_field_state,
+                purchase_field_state=purchase_field_state
+            )   
+
+        if (submit_type == 'save_purchase' or 
+            submit_type == 'export_purchase' or
+            submit_type == 'start_purchase' or
+            submit_type == 'receive_purchase' or
+            submit_type == 'apply_purchase'
+            ):
+            # get the form data 
+            raw_datas = request.form 
+            # set the form data to dictionary
+            raw_datas = raw_datas.to_dict(flat=False)
+            # strip off unwated characters
+            raw_datas = str(raw_datas).replace("[", "")
+            raw_datas = str(raw_datas).replace("]", "")
+            # convert the raw data to a dictionary
+            purch_lines = ast.literal_eval(raw_datas) 
+            # return purch_lines
+            
+
+            ####### dodgy code START - never do this - im running out of time so okay for now  ######
+            purch_lines.pop('submit_type')
+            temp_purch_list = []
+            purch_lines_new = []
+
+            # Loop 1 - build the purchase qty 
+            for temp in purch_lines:
+                # split the individual form data 
+                temp_char = temp.split('-') 
+                temp_char.append(str(purch_lines[temp]))
+                # build the temporary list
+                if temp_char[0] == 'PURCHASE':
+                    temp_dict = { 'id':  temp_char[1],
+                                   'prod_code': temp_char[2],
+                                   'purch_qty': temp_char[3],
+                                   'receive_qty': '0'
+                                }
+                    temp_purch_list.append(temp_dict)
+
+            # Loop 2 - add the receive qty 
+            for temp in purch_lines:
+               # split the individual form data 
+                temp_char = temp.split('-') 
+                temp_char.append(str(purch_lines[temp]))
+                if temp_char[0] == 'RECEIVE':
+                    for item in temp_purch_list:
+                        if item['prod_code'] == temp_char[2]:
+                            item['receive_qty'] = str(purch_lines[temp])
+                            # return item 
+                            purch_lines_new.append(item)
+
+            ####### dodgy code END - never do this - im running out of time so okay for now  ######     
+
+            # save current purchase
+            # if submit_type == 'save_purchase':
+            # loop all lines
+            for purch_item in purch_lines_new:
+                # check purchase detail exist
+                purchase_detail = PurchaseDetail.query.filter_by(id=str(purch_item['id'])).first()
+                if purchase_detail:
+                    # check product exist
+                    prod = Product.query.filter_by(code=purch_item['prod_code']).first()
+                    if prod:
+                        purchase_detail.quantity_purchase = int(purch_item['purch_qty'])
+                        purchase_detail.quantity_receive = int(purch_item['receive_qty'])
+            # throw success message 
+            message = 'Changes has been saved!'
+
+            if submit_type == 'start_purchase':
+                purchase_header.status = 'In Transit'
+                db.session.commit()
+                receive_field_state = 'readonly="readonly"'
+                purchase_field_state = 'readonly="readonly"'
+                message = 'Purchase now in Transit, you cannot update quantity until you Receive the goods!'
+
+            if submit_type == 'receive_purchase':
+                purchase_header.status = 'Received'
+                db.session.commit()
+                receive_field_state = ''
+                purchase_field_state = 'readonly="readonly"'
+                message = 'Purchase received, please match the purchase quantity against the receive quantity!'
+
+            if submit_type == 'export_purchase':
+                message = " Sorry this module is not yet available! "
+                css_class = 'alert-danger'
+
+            if submit_type == 'apply_purchase':
+                if purchase_header.status != 'Received':
+                    message="Unable to apply purchase, please contact administrator!"
+                    css_class='alert-danger'
+                else:
+                    purchase_header.status = 'New'
+                    # save the quantity to product atble 
+                    for purch_item in purch_lines_new:
+                        # check purchase detail exist
+                        purchase_detail = PurchaseDetail.query.filter_by(id=str(purch_item['id'])).first()
+                        if purchase_detail:
+                            # now save to the product able
+                            prod = Product.query.filter_by(id=purchase_detail.product_id).first()
+                            if prod:
+                                prod.quantity = prod.quantity + purchase_detail.quantity_receive
+                                purchase_detail.quantity_purchase = 0
+                                purchase_detail.quantity_receive = 0
+                    db.session.commit()
+                    receive_field_state = ''
+                    receive_field_state = 'readonly="readonly"'
+                    message="Purchase complete!"
+                    css_class='alert-success'
+
+
+            return render_template('purchase.html', 
+                purchase_header=purchase_header,
+                message=message, 
+                css_class=css_class,
+                receive_field_state=receive_field_state,
+                purchase_field_state=purchase_field_state
+            )  
+
+        temp_char = submit_type.split('-')
+        if temp_char[0] == "DEL":
+            if purchase_header.status == 'New':
+                purch_detail = PurchaseDetail.query.filter_by(id=int(temp_char[1])).first()
+                if purch_detail:
+                    db.session.delete(purch_detail)
+                    db.session.commit()
+                    message = 'Line has been removed!'
+                    css_class = 'alert-success'
+            else:
+                message = 'Remove not allowed!'
+                css_class = 'alert-danger'
+
+            receive_field_state = ''
+            receive_field_state = 'readonly="readonly"'
+            return render_template('purchase.html', 
+                    purchase_header=purchase_header,
+                    message=message, 
+                    css_class=css_class,
+                    receive_field_state=receive_field_state,
+                    purchase_field_state=purchase_field_state)
+    
 
 @app.route('/changepassword', methods=['POST', 'GET'])
 @login_required
@@ -258,3 +528,22 @@ def resetdevpassword():
         user.hash_password(password='dev')
         db.session.commit()
     return redirect('/')
+
+# # load_product_on_adjustment
+# @app.route('/load_product_on_adjustment/<id>')
+# def load_product_on_adjustment(id):
+#     # fetch the adjustment header exist
+#     adjustment_header = AdjustmentHeader.query.filter_by(id=id).first()
+#     # check if the adjustment header exist
+#     if adjustment_header:
+#         # get all the products
+#         all_products = Product.query.all()
+#         for product in all_products:
+#             existing_prod = AdjustmentDetail.query.filter_by(product_id=product.id).first()
+#             if not existing_prod:
+#                 adjustment_detail = AdjustmentDetail(quantity_adjust=0, 
+#                     adjustment_reference=adjustment_header, 
+#                     adjustment_detail=product)
+#                 db.session.add(adjustment_detail)
+#                 db.session.commit()
+#         return redirect('/adjustment')
