@@ -1,0 +1,197 @@
+﻿{% extends 'base.html' %}
+{% block title %} Customers {% endblock %}
+
+{% block customcss %}
+    <link href="../static/all-themes.css" rel="stylesheet">
+{% endblock %}
+
+{% set bodyclass = 'theme-red' %}
+
+{% block content %}
+    
+    {% include './includes/nav.html' %}
+
+    <section class="content">
+
+        <div class="container-fluid">
+
+            <!-- Widgets -->
+            <div class="row clearfix">
+                
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box-4 hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons col-red">shopping_cart</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">PRODUCTS</div>
+                            <div class="number count-to" data-from="0" data-to="125" data-speed="1000" data-fresh-interval="20">{{ prod_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box-4 hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons col-teal">equalizer</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">ADJUSTMENTS</div>
+                            <div class="number">{{ adj_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box-4 hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons col-light-blue">access_alarm</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">PURCHASES</div>
+                            <div class="number">{{ purch_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box-4 hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons col-indigo">face</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">CUSTOMERS</div>
+                            <div class="number count-to" data-from="0" data-to="257" data-speed="1000" data-fresh-interval="20">{{ cust_count }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Widgets -->
+            <!-- CPU Usage -->
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                USER GUIDE
+                                <small>Please read through the tabs for the instruction</small>
+                            </h2>
+                            
+                        </div>
+                        <div class="body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs tab-nav-right" role="tablist">
+                                <li role="presentation" class="active"><a href="#home" data-toggle="tab" aria-expanded="false">PRODUCT MAINTENANCE</a></li>
+                                <li role="presentation" class=""><a href="#profile" data-toggle="tab" aria-expanded="false">STOCK ADJUSTMENTS</a></li>
+                                <li role="presentation" class=""><a href="#messages" data-toggle="tab" aria-expanded="false">STOCK PURCHASES</a></li>
+                                <li role="presentation" class=""><a href="#settings" data-toggle="tab" aria-expanded="true">CUSTOMER MAINTENANCE</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade active in" id="home">
+                                    <b>Product Maintainance</b>
+                                    <p>
+                                            The technical meaning of maintenance involves functional checks, servicing, repairing or replacing of necessary devices, equipment, machinery, building infrastructure, and supporting utilities in industrial, business, governmental, and residential installations. Over time, this has come to include multiple wordings that describe various cost-effective practices to keep equipment operational; these activities take place either before or after a failure.
+                                    </p>
+                                    <p>
+                                        Product Maintenance provides customers with releases after the General Availability date up to the end of the Maintenance Period. Should a critical error be detected in a release during its maintenance period then the SOS would fix that bug in a way that does not require complete testing of the release.
+                                    </p>
+                                        
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="profile">
+                                    <b>Stock adjustments</b>
+                                    <p>
+                                        A stock adjustment is used to adjust stock for any number of reasons such as write-offs, stock-takes, donations etc. You can also adjust the value of a product via Stock Adjustments page.
+                                    </p>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="messages">
+                                    <b>Stock Purchases</b>
+                                    <p>
+                                        A direct public offering is an initial public offering in which the stock is purchased directly from the company, usually without the aid of brokers. When it comes to financing a purchase of stocks there are two ways: purchasing stock with money that is currently in the buyer's ownership, or by buying stock on margin.
+                                    </p>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="settings">
+                                    <b>Customer Maintenance</b>
+                                    <p>
+                                        Customer Maintenance means steps taken by Customer to properly maintain the Customer Equipment in accordance with manufacturer instructions and requirements.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# CPU Usage -->
+
+            <div class="row clearfix">
+                <!-- Task Info -->
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                    <div class="card">
+                        <div class="header">
+                            <h2>APP INFOS</h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive">
+                                <table class="table table-hover dashboard-task-infos">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Key</th>
+                                            <th>Values</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>UI</td>
+                                            <td>AMINBSB - MATERIAL DESIGN</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Backend</td>
+                                            <td>FLASK MICROFRAMEWORK</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Database</td>
+                                            <td>SQLITE</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4</td>
+                                            <td>Creator</td>
+                                            <td>CODE CARPENTRY</td>
+                                        </tr>
+                                        <tr>
+                                            <td>5</td>
+                                            <td>License</td>
+                                            <td>MIT - LICENSE</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- #END# Task Info -->
+                <!-- Browser Usage -->
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                    <div class="card">
+                        <div class="header">
+                            <h2>BROWSER USAGE</h2>
+                        </div>
+                        <div class="body">
+                            <div id="donut_chart" class="dashboard-donut-chart"><svg height="265" version="1.1" width="255" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; left: -0.65625px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.2.0</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></defs><path fill="none" stroke="#e91e63" d="M127.5,210.83333333333331A78.33333333333333,78.33333333333333,0,0,0,187.43228005930425,82.05961025126558" stroke-width="2" opacity="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 1;"></path><path fill="#e91e63" stroke="#ffffff" d="M127.5,213.83333333333331A81.33333333333333,81.33333333333333,0,0,0,189.7275588700861,80.12785064386725L217.39842008895639,56.83941537689836A117.5,117.5,0,0,1,127.5,250Z" stroke-width="3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><path fill="none" stroke="#00bcd4" d="M187.43228005930425,82.05961025126558A78.33333333333333,78.33333333333333,0,0,0,62.36764366618128,88.98118487923213" stroke-width="2" opacity="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 0;"></path><path fill="#00bcd4" stroke="#ffffff" d="M189.7275588700861,80.12785064386725A81.33333333333333,81.33333333333333,0,0,0,59.87321299807758,87.31450685333039L33.9588499461114,69.99957402868444A112.5,112.5,0,0,1,213.57295540431994,60.05901472256227Z" stroke-width="3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><path fill="none" stroke="#ff9800" d="M62.36764366618128,88.98118487923213A78.33333333333333,78.33333333333333,0,0,0,60.64794527763557,173.3278567954418" stroke-width="2" opacity="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 0;"></path><path fill="#ff9800" stroke="#ffffff" d="M59.87321299807758,87.31450685333039A81.33333333333333,81.33333333333333,0,0,0,58.08765382018332,174.8914768429268L31.489070345540455,191.1357517806877A112.5,112.5,0,0,1,33.9588499461114,69.99957402868444Z" stroke-width="3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><path fill="none" stroke="#009688" d="M60.64794527763557,173.3278567954418A78.33333333333333,78.33333333333333,0,0,0,108.64755231449664,208.530890612806" stroke-width="2" opacity="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 0;"></path><path fill="#009688" stroke="#ffffff" d="M58.08765382018332,174.8914768429268A81.33333333333333,81.33333333333333,0,0,0,107.92554367973267,211.4427119554241L100.42467619635154,241.6933003481788A112.5,112.5,0,0,1,31.489070345540455,191.1357517806877Z" stroke-width="3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><path fill="none" stroke="#607d8b" d="M108.64755231449664,208.530890612806A78.33333333333333,78.33333333333333,0,0,0,127.4753908579517,210.8333294677383" stroke-width="2" opacity="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 0;"></path><path fill="#607d8b" stroke="#ffffff" d="M107.92554367973267,211.4427119554241A81.33333333333333,81.33333333333333,0,0,0,127.47444838017113,213.83332931969426L127.4646570832285,244.9999944483476A112.5,112.5,0,0,1,100.42467619635154,241.6933003481788Z" stroke-width="3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><text x="127.5" y="122.5" text-anchor="middle" font-family="&quot;Arial&quot;" font-size="15px" stroke="none" fill="#000000" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: 800;" font-weight="800" transform="matrix(2.3039,0,0,2.3039,-166.0259,-170.8137)" stroke-width="0.4340425531914894"><tspan dy="5.5" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Chrome</tspan></text><text x="127.5" y="142.5" text-anchor="middle" font-family="&quot;Arial&quot;" font-size="14px" stroke="none" fill="#000000" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 14px;" transform="matrix(1.6319,0,0,1.6319,-80.4297,-84.9965)" stroke-width="0.6127659574468085"><tspan dy="5" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">37%</tspan></text></svg></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- #END# Browser Usage -->
+            </div>
+        </div>
+
+    </section>
+
+    
+
+{% endblock %}
+
+{% block js %}
+    {% include './includes/main-js.html' %}
+{% endblock%}

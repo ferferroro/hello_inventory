@@ -1,5 +1,5 @@
 ﻿{% extends 'base.html' %}
-{% block title %} Add Product {% endblock %}
+{% block title %} Add Customer {% endblock %}
 
 {% block customcss %}
     <link href="../static/all-themes.css" rel="stylesheet">
@@ -20,58 +20,52 @@
                     <div class="card">
                         <div class="header">
                             <h2>
-                                Add product
+                                Add customer
                             </h2>
                             <ul class="header-dropdown m-r--5">
                             </ul>
                         </div>
                         <div class="body">
-                            <form class="form-horizontal" method="POST" action="/add_product">
+                            <form class="form-horizontal" method="POST" action="/add_customer">
                                 <div class="row clearfix">
                                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                                        <label for="email_address_2">Code</label>
+                                        <label for="email_address_2">Full Name</label>
                                     </div>
                                     <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <input type="text" name="code" class="form-control" value="{{ code }}">
+                                                <input type="text" name="fullname" class="form-control" value="{{ fullname }}">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row clearfix">
                                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                                        <label for="email_address_2">Name</label>
+                                        <label for="email_address_2">Balance</label>
                                     </div>
                                     <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <input type="text" name="name" class="form-control" value="{{ name }}">
+                                                <input type="text" name="balance" class="form-control" value="{{ balance }}">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row clearfix">
                                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                                        <label for="email_address_2">Quantity</label>
+                                        <label for="email_address_2">Remarks</label>
                                     </div>
                                     <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <input type="number" name="quantity" class="form-control" value="{{ quantity }}">
+                                                <input type="text" name="remarks" class="form-control" value="{{ remarks }}">
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row clearfix">
-                                    <!-- <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
-                                        <input type="checkbox" id="remember_me_3" class="filled-in">
-                                        <label for="remember_me_3">Remember Me</label>
-                                    </div> -->
-                                </div>
+                                </div>                                
                                 <div class="row clearfix">
                                     <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
-                                        <button type="submit" class="btn btn-primary m-t-15 waves-effect">Save Product</button>
+                                        <button type="submit" class="btn btn-primary m-t-15 waves-effect">Save Customer</button>
                                     </div>
                                 </div>
                             </form>

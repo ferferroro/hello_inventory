@@ -12,6 +12,8 @@
     {% include './includes/nav.html' %}
 
     <section class="content">
+        {% include './includes/notification.html' %}
+
         <div class="container-fluid">
             <form method='POST'>
             <div class="row clearfix">
@@ -41,11 +43,6 @@
                             </ul>
                         </div>
                         <div class="body table-responsive">
-                            {% if message %}
-                                <div class="alert {{ css_class }}">
-                                    {{ message }}
-                                </div>
-                            {% endif %}
                             <table class="table table-striped">
                                 <thead>
                                     <tr>

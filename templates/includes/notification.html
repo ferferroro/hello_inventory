@@ -1,0 +1,15 @@
+<!-- Notification message Start -->
+{% if message %}
+<div class="row clearfix jsdemo-notification-button"> 
+    <input type="hidden" id="custom-message-load" value="{{ message }}">
+    <input type="hidden" id="custom-css-load" value="{{ css_class }}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var customMessage = document.getElementById("custom-message-load").value;  
+            var customCss = document.getElementById("custom-css-load").value;  
+            showNotification(customCss, '', 'bottom', 'center', '', '', customMessage);
+        }, false);
+    </script>
+</div>
+{% endif %}
+<!-- Notification message End -->

@@ -88,6 +88,13 @@ class PurchaseDetail(db.Model):
     purchase_header_id = db.Column(db.Integer, db.ForeignKey('purchase_header.id'))
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
 
+class Customer(db.Model):
+    __tablename__ = 'customer'
+    id = db.Column(db.Integer, primary_key=True)
+    fullname = db.Column(db.String(50))
+    balance = db.Column(db.Float)
+    remarks = db.Column(db.String(50))
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -112,6 +119,77 @@ def signin():
         else:
             return render_template('index.html', message='Invalid Login!')
         # return f'uid: {username} pwd: {password}'
+
+@app.route('/home')
+@login_required
+def home():
+    prod_count = Product.query.count()
+    adj_count = AdjustmentDetail.query.count()
+    purch_count =  Customer.query.count()
+    cust_count = Customer.query.count()
+    return render_template('home.html', **locals())  
+
+@app.route('/customers')
+@login_required
+def customers():
+    all_customers = Customer.query.all()
+    return render_template('customers.html', all_customers=all_customers)  
+
+@app.route('/add_customer', methods=['POST', 'GET'])
+@login_required
+def add_customer():
+    # multi line assign
+    message, css_class, fullname, balance, remarks = ('', '', '', '', '')
+
+    if request.method == 'GET':
+        return render_template('add_customer.html', **locals())  
+    
+    if request.method == 'POST':
+        fullname = request.form['fullname']
+        balance = request.form['balance']
+        remarks = request.form['remarks']
+
+        new_customer = Customer(fullname=fullname, balance=balance, remarks=remarks)
+        db.session.add(new_customer)
+        db.session.commit()
+        message = f'Customer : {new_customer.fullname} added'
+        css_class = 'alert-success'
+        return render_template('add_customer.html', **locals())  
+
+@app.route('/edit_customer/<string:id>', methods=['POST', 'GET'])
+@login_required
+def edit_customer(id):
+    # multi line assign
+    message, css_class, fullname, balance, remarks = ('', '', '', '', '')
+
+    edit_customer = Customer.query.filter_by(id=id).first_or_404()
+
+    if edit_customer: 
+
+        if request.method == 'GET':
+            fullname, balance, remarks = edit_customer.fullname, edit_customer.balance, edit_customer.remarks
+            return render_template('edit_customer.html', **locals())  
+        
+        if request.method == 'POST':
+            fullname = request.form['fullname']
+            balance = request.form['balance']
+            remarks = request.form['remarks']
+
+            edit_customer.fullname, edit_customer.balance, edit_customer.remarks = fullname, balance, remarks
+            db.session.commit()
+            message = f'Customer : {edit_customer.fullname} updated'
+            css_class = 'alert-success'
+            return render_template('edit_customer.html', **locals())  
+
+@app.route('/delete_customer/<string:id>', methods=['POST'])
+@login_required
+def delete_customer(id):
+    if request.method == 'POST':
+        delete_customer = Customer.query.filter_by(id=id).first_or_404()
+        if delete_customer:
+            db.session.delete(delete_customer)
+            db.session.commit()
+            return redirect(url_for('customers'))
 
 @app.route('/products')
 @login_required
@@ -197,6 +275,7 @@ def edit_product(id):
     else:
         return 'Invalid Request'
 
+
 @app.route('/delete_product/<string:id>', methods=['POST'])
 @login_required
 def delete_product(id):
@@ -235,7 +314,11 @@ def adjustment():
                         adjustment_detail=product)
                     db.session.add(adjustment_detail)
                     db.session.commit()
-            return redirect('/adjustment')
+            # return redirect('/adjustment')
+            return render_template('adjustment.html', 
+                    adjustment_header=adjustment_header,
+                    message='All the products has been loaded!', 
+                    css_class='alert-success')
 
         if submit_type == 'save_adjustment' or submit_type == 'apply_adjustment':
             # get the form data 
@@ -509,7 +592,7 @@ def changepassword():
            save_status = 'Password change failed!'
            css_alert_class = 'alert-danger'
 
-        return render_template('changepassword.html',message=save_status, css_alert_class=css_alert_class)
+        return render_template('changepassword.html',message=save_status, css_class=css_alert_class)
     
 @app.route('/logout')
 @login_required
@@ -528,22 +611,3 @@ def resetdevpassword():
         user.hash_password(password='dev')
         db.session.commit()
     return redirect('/')
-
-# # load_product_on_adjustment
-# @app.route('/load_product_on_adjustment/<id>')
-# def load_product_on_adjustment(id):
-#     # fetch the adjustment header exist
-#     adjustment_header = AdjustmentHeader.query.filter_by(id=id).first()
-#     # check if the adjustment header exist
-#     if adjustment_header:
-#         # get all the products
-#         all_products = Product.query.all()
-#         for product in all_products:
-#             existing_prod = AdjustmentDetail.query.filter_by(product_id=product.id).first()
-#             if not existing_prod:
-#                 adjustment_detail = AdjustmentDetail(quantity_adjust=0, 
-#                     adjustment_reference=adjustment_header, 
-#                     adjustment_detail=product)
-#                 db.session.add(adjustment_detail)
-#                 db.session.commit()
-#         return redirect('/adjustment')
