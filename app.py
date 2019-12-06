@@ -33,6 +33,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(30), unique=True)
     name = db.Column(db.String(50))
+    price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -115,7 +116,7 @@ def signin():
 
         if user and user.check_password(password=password):
             login_user(user)
-            return redirect(url_for('products'))
+            return redirect(url_for('home'))
         else:
             return render_template('index.html', message='Invalid Login!')
         # return f'uid: {username} pwd: {password}'
@@ -201,7 +202,7 @@ def products():
 @login_required
 def add_product():
     # multi line assign
-    message, css_class, code, name, quantity = ('', '', '', '', '')
+    message, css_class, code, name, quantity, price = ('', '', '', '', '', '')
 
     if request.method == 'GET':
         return render_template('add_product.html')  
@@ -210,8 +211,9 @@ def add_product():
         code = request.form['code']
         name = request.form['name']
         quantity = request.form['quantity']
+        price = request.form['price']
 
-        new_product = Product(code=code, name=name, quantity=quantity)
+        new_product = Product(code=code, name=name, quantity=quantity, price=price)
         error_list = new_product.check_fields(mode='Add')
 
         if error_list:
@@ -231,7 +233,7 @@ def add_product():
 @login_required
 def edit_product(id):
     # multi line assign
-    message, css_class, code, name, quantity = ('', '', '', '', '')
+    message, css_class, code, name, quantity, price = ('', '', '', '', '', '')
 
     edit_product = Product.query.filter_by(id=id).first_or_404()
 
@@ -241,6 +243,7 @@ def edit_product(id):
             code = edit_product.code
             name = edit_product.name
             quantity = edit_product.quantity
+            price = edit_product.price
             return render_template('edit_product.html', **locals()) 
 
         if request.method == 'POST':
@@ -248,6 +251,7 @@ def edit_product(id):
             code = request.form['code']
             name = request.form['name']
             quantity = request.form['quantity']
+            price = request.form['price']
 
             # query if the product code is already existing 
             existing_product = Product.query.filter(Product.code==code, Product.id!=edit_product.id).count()
@@ -259,6 +263,7 @@ def edit_product(id):
                 edit_product.code = code
                 edit_product.name = name
                 edit_product.quantity = quantity
+                edit_product.price = price
                 # validate if fields are blank 
                 error_list = edit_product.check_fields(mode='Edit')
 

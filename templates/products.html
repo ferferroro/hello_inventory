@@ -58,8 +58,8 @@
                                         <th>Code</th>
                                         <th>Name</th>
                                         <th>Quantity</th>
+                                        <th>Price</th>
                                         <th>Created at</th>
-                                        <th>Updated at</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -69,8 +69,8 @@
                                             <th scope="row">{{ product.code }}</th>
                                             <td>{{ product.name }}</td>
                                             <td>{{ product.quantity }}</td>
+                                            <td> {{ product.price }}</td>
                                             <td>{{ product.created_at.strftime('%Y-%m-%d') }}</td>
-                                            <td>{{ product.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                                             <td>
                                                 <div class="js-sweetalert">
                                                     <!-- <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"> -->
