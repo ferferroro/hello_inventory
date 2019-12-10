@@ -225,7 +225,7 @@ def add_product():
             db.session.commit()
             message = f'Product code: {new_product.code} added'
             css_class = 'alert-success'
-            code, name, quantity = ('', '', '')
+            code, name, quantity, price = ('', '', '', '')
             return render_template('add_product.html', **locals())  
 
 
@@ -287,9 +287,26 @@ def delete_product(id):
     if request.method == 'POST':
         delete_product = Product.query.filter_by(id=id).first_or_404()
         if delete_product:
-            db.session.delete(delete_product)
-            db.session.commit()
-            return redirect(url_for('products'))
+            existing_adj = AdjustmentDetail.query.filter_by(product_id=delete_product.id).first()
+            existing_purch = PurchaseDetail.query.filter_by(product_id=delete_product.id).first()
+            if existing_adj or existing_purch:
+                if existing_adj:
+                    message = 'This product exist in Stock Adjustment!'
+                else:
+                    message = 'This product exist in Stock Purchase!'
+                css_class = 'alert-danger'
+            else:   
+                db.session.delete(delete_product)
+                db.session.commit()
+                message = 'Product has been removed!'
+                css_class = 'alert-success'
+                
+            all_products = Product.query.order_by(Product.updated_at.desc()).all()    
+            return render_template('products.html', 
+                    all_products=all_products,
+                    message=message, 
+                    css_class=css_class
+                )
 
 @app.route('/adjustment', methods=['POST','GET'])
 @login_required
